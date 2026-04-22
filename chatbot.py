@@ -1,10 +1,17 @@
 import json
 import random
 import re
+from pathlib import Path
 
 
-def load_intents(file_path="intents.json"):
-    with open(file_path, "r", encoding="utf-8") as file:
+BASE_DIR = Path(__file__).resolve().parent
+DEFAULT_FALLBACK = "Sorry, I do not understand that yet. Try asking something else."
+
+
+def load_intents(file_path=None):
+    intents_path = Path(file_path) if file_path else BASE_DIR / "intents.json"
+
+    with open(intents_path, "r", encoding="utf-8") as file:
         return json.load(file)
 
 
@@ -20,7 +27,7 @@ def get_response(user_input, intents):
             if clean_text(pattern) in text or text in clean_text(pattern):
                 return random.choice(intent["responses"])
 
-    return "Sorry, I do not understand that yet. Try asking something else."
+    return DEFAULT_FALLBACK
 
 
 def main():

@@ -1,54 +1,66 @@
 # AI Chatbot
 
-An impressive beginner-friendly AI project built with Python and Natural Language Processing concepts.
+A simple AI-style chatbot project built with Python. It accepts user questions in the terminal and replies automatically using an intent-based response system.
 
 ## Features
 
-- User asks questions in the terminal
-- Bot replies automatically
-- Simple intent-based response system
-- Easy to extend with more training data
+- Accepts user input from the terminal
+- Responds automatically with matching answers
+- Uses a clean `intents.json` file for chatbot data
+- Easy to expand with new questions and responses
+- Includes a basic test file for quick verification
 
-## Tools Used
+## Tech Stack
 
 - Python
-- NLP concepts
-- TensorFlow (optional future upgrade)
-- OpenCV (optional future upgrade for webcam/face input)
+- JSON
+- NLP-style text cleaning with regular expressions
 
 ## Project Structure
 
 ```text
-AI-Chatbot/
+ai-chatbot/
 |-- chatbot.py
 |-- intents.json
+|-- test_chatbot.py
 |-- requirements.txt
 |-- .gitignore
+|-- LICENSE
 |-- README.md
 ```
 
 ## How It Works
 
-The chatbot reads user input, matches it against common intents such as greetings, help, and farewell messages, and returns a suitable response. This starter version is rule-based so it is easy to understand and upload to GitHub. Later, you can upgrade it with TensorFlow and a trained NLP model.
+The chatbot normalizes user input, compares it against known patterns stored in `intents.json`, and returns a matching response. If no intent matches, it returns a fallback message.
 
-## Run Locally
+## Setup
 
-1. Install Python 3
-2. Install dependencies:
+1. Make sure Python 3 is installed.
+2. Open the project folder.
+3. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the chatbot:
+## Run The Chatbot
 
 ```bash
 python chatbot.py
 ```
 
-## Example Conversation
+Type `exit` to close the chatbot.
+
+## Run Tests
+
+```bash
+python -m unittest test_chatbot.py
+```
+
+## Example
 
 ```text
+AI Chatbot started. Type 'exit' to quit.
 You: hello
 Bot: Hello! How can I help you today?
 
@@ -58,12 +70,12 @@ Bot: I am your AI chatbot assistant.
 
 ## Future Improvements
 
-- Add TensorFlow model training
-- Add voice input and output
-- Add OpenCV face detection
-- Build a web app using Flask or Streamlit
-- Train on custom question-answer data
+- Add TensorFlow-based intent classification
+- Add speech input and speech output
+- Build a GUI with Tkinter, Flask, or Streamlit
+- Add more intents and custom training data
+- Integrate OpenCV for webcam-based features
 
-## GitHub Description
+## License
 
-AI chatbot project using Python and NLP. The bot answers user questions automatically and can be extended with TensorFlow and OpenCV.
+This project is licensed under the MIT License.
