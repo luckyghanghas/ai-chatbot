@@ -1,80 +1,84 @@
-# AI Chatbot
+# AI Projects Portfolio
 
-A simple AI-style chatbot project built with Python. It accepts user questions in the terminal and replies automatically using an intent-based response system.
+A GitHub-ready Python portfolio with practical AI and analytics mini-projects. Each project is designed to run locally with simple commands and minimal setup.
 
-## Features
+## Included Projects
 
-- Accepts user input from the terminal
-- Responds automatically with matching answers
-- Uses a clean `intents.json` file for chatbot data
-- Easy to expand with new questions and responses
-- Includes a basic test file for quick verification
+### 1. Resume Analyzer
 
-## Tech Stack
+Compare a resume against a job description, calculate a skill match score, identify matched skills, and suggest missing skills.
 
-- Python
-- JSON
-- NLP-style text cleaning with regular expressions
+### 2. Fake News Detector
+
+Classify a news article as likely real or fake using a lightweight NLP pipeline and a small built-in training dataset.
+
+### 3. AI Chatbot
+
+A basic intent-based chatbot that replies automatically in the terminal.
 
 ## Project Structure
 
 ```text
-ai-chatbot/
+ai-projects-portfolio/
 |-- chatbot.py
 |-- intents.json
-|-- test_chatbot.py
-|-- requirements.txt
+|-- projects/
+|   |-- fake_news_detector/
+|   |   |-- app.py
+|   |   |-- dataset.json
+|   |   |-- README.md
+|   |-- resume_analyzer/
+|   |   |-- app.py
+|   |   |-- sample_job_description.txt
+|   |   |-- sample_resume.txt
+|   |   |-- skills.json
+|   |   |-- README.md
+|-- tests/
+|   |-- test_chatbot.py
+|   |-- test_fake_news_detector.py
+|   |-- test_resume_analyzer.py
 |-- .gitignore
 |-- LICENSE
 |-- README.md
 ```
 
-## How It Works
+## Requirements
 
-The chatbot normalizes user input, compares it against known patterns stored in `intents.json`, and returns a matching response. If no intent matches, it returns a fallback message.
+- Python 3
+- No external packages required for the current version
 
-## Setup
+## How To Run
 
-1. Make sure Python 3 is installed.
-2. Open the project folder.
-3. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-## Run The Chatbot
+### Chatbot
 
 ```bash
 python chatbot.py
 ```
 
-Type `exit` to close the chatbot.
+### Resume Analyzer
+
+```bash
+python projects/resume_analyzer/app.py
+```
+
+### Fake News Detector
+
+```bash
+python projects/fake_news_detector/app.py
+```
 
 ## Run Tests
 
 ```bash
-python -m unittest test_chatbot.py
+python -m unittest discover -s tests
 ```
 
-## Example
+## Why These Projects Stand Out
 
-```text
-AI Chatbot started. Type 'exit' to quit.
-You: hello
-Bot: Hello! How can I help you today?
-
-You: what is your name
-Bot: I am your AI chatbot assistant.
-```
-
-## Future Improvements
-
-- Add TensorFlow-based intent classification
-- Add speech input and speech output
-- Build a GUI with Tkinter, Flask, or Streamlit
-- Add more intents and custom training data
-- Integrate OpenCV for webcam-based features
+- They are easy to demo in interviews and on GitHub
+- They use practical AI and analytics ideas
+- They are structured like real mini products, not just code snippets
+- They are easy to upgrade later with TensorFlow, scikit-learn, Flask, or Streamlit
 
 ## License
 

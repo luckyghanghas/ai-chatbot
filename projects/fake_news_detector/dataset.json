@@ -1,0 +1,44 @@
+{
+  "articles": [
+    {
+      "label": "real",
+      "text": "The city health department released its annual vaccination report showing a steady rise in coverage across public schools."
+    },
+    {
+      "label": "real",
+      "text": "Researchers at the university published a peer reviewed study on rainfall patterns and crop production."
+    },
+    {
+      "label": "real",
+      "text": "The finance ministry announced new tax guidelines during an official press conference on Tuesday."
+    },
+    {
+      "label": "real",
+      "text": "Local authorities confirmed that the bridge will reopen next month after safety inspections are completed."
+    },
+    {
+      "label": "real",
+      "text": "The election commission released verified voter turnout numbers after counting ended statewide."
+    },
+    {
+      "label": "fake",
+      "text": "Secret scientists reveal a magical fruit can erase all disease overnight but world leaders refuse to share it."
+    },
+    {
+      "label": "fake",
+      "text": "A viral post claims the moon emitted a hidden signal that instantly changed human DNA across the planet."
+    },
+    {
+      "label": "fake",
+      "text": "Anonymous insiders say drinking silver water guarantees immortality and hospitals are hiding the cure."
+    },
+    {
+      "label": "fake",
+      "text": "An unverified article says a celebrity built a time machine and traveled back to rewrite history."
+    },
+    {
+      "label": "fake",
+      "text": "Posts online claim a miracle powder makes engines run forever without fuel and companies are suppressing it."
+    }
+  ]
+}

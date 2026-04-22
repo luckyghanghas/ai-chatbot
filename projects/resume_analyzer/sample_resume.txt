@@ -1,0 +1,3 @@
+Lucky is a Python developer with experience in data analysis, SQL, pandas, numpy, Git, and problem solving.
+He has built dashboard projects, worked with machine learning basics, and created small Flask applications.
+He is comfortable with communication, statistics, and data visualization.
