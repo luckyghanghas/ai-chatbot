@@ -1,2 +1,0 @@
-We are hiring a data analyst with skills in Python, SQL, Excel, Power BI, data visualization, communication,
-statistics, machine learning, and problem solving. Experience with pandas and scikit-learn is a plus.
