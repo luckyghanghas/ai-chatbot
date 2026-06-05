@@ -7,6 +7,13 @@ import urllib.request
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 
+# Load .env file if present (for local development)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Optional NLP imports - wrapped with fallback
 import nltk
 from nltk.corpus import stopwords

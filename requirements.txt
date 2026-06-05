@@ -6,3 +6,4 @@ numpy
 google-genai
 g4f
 curl_cffi
+python-dotenv
