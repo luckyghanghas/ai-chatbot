@@ -223,37 +223,45 @@ def chat():
             # Fall back to standard response if generation fails
             pass
 
-    # No match and no API key available, fall back to keyless AI Chat (PollinationsAI via g4f)
-    try:
-        context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs[:5]])
-        prompt = (
-            "You are an FAQ chatbot assistant for Antigravity Tech E-Store.\n"
-            "Here is the database of official FAQs:\n"
-            f"{context_string}\n\n"
-            f"User Question: \"{user_message}\"\n\n"
-            "Instructions:\n"
-            "1. If the user's question is answered in the FAQs, use that information to construct the reply.\n"
-            "2. If it is NOT in the FAQs, answer their question directly, accurately, and politely as a general customer service representative.\n"
-            "3. Keep your reply concise (1-3 sentences) and professional."
-        )
-        generated_answer = g4f.ChatCompletion.create(
-            model=g4f.models.default,
-            provider=g4f.Provider.PollinationsAI,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        if generated_answer:
-            return jsonify({
-                "answer": generated_answer,
-                "confidence": 1.0,
-                "matched_question": "Generative Fallback (Keyless)",
-                "category": "AI Assistant",
-                "suggestions": [],
-                "is_generated": True
-            })
-    except Exception as e:
-        print(f"Keyless Fallback Error: {e}")
-        # Fall back to suggestions list if AI fails
-        pass
+    # No match and no API key available, fall back to keyless AI Chat (try multiple providers)
+    context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs[:5]])
+    prompt = (
+        "You are an FAQ chatbot assistant for Antigravity Tech E-Store.\n"
+        "Here is the database of official FAQs:\n"
+        f"{context_string}\n\n"
+        f"User Question: \"{user_message}\"\n\n"
+        "Instructions:\n"
+        "1. If the user's question is answered in the FAQs, use that information to construct the reply.\n"
+        "2. If it is NOT in the FAQs, answer their question directly, accurately, and politely as a general customer service representative.\n"
+        "3. Keep your reply concise (1-3 sentences) and professional."
+    )
+
+    # Try multiple free providers in order until one works
+    keyless_providers = [
+        g4f.Provider.Blackbox,
+        g4f.Provider.DeepInfraChat,
+        g4f.Provider.PollinationsAI,
+    ]
+
+    for provider in keyless_providers:
+        try:
+            generated_answer = g4f.ChatCompletion.create(
+                model=g4f.models.default,
+                provider=provider,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            if generated_answer and len(str(generated_answer).strip()) > 5:
+                return jsonify({
+                    "answer": str(generated_answer).strip(),
+                    "confidence": 1.0,
+                    "matched_question": "Generative Fallback (Keyless)",
+                    "category": "AI Assistant",
+                    "suggestions": [],
+                    "is_generated": True
+                })
+        except Exception as e:
+            print(f"Keyless Fallback Error ({provider.__name__}): {e}")
+            continue
 
     # Fallback to local suggestion chips if all AI systems fail
     fallback_suggestions = []
