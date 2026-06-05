@@ -241,69 +241,25 @@ def chat():
     # Helper: strip internal reasoning/thinking blocks from model output
     def clean_answer(text):
         text = str(text).strip()
-        # Remove <think>...</think> blocks (used by reasoning models like Qwen)
         text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
-        # Remove leading monologue lines (internal reasoning leaked as plain text)
-        lines = text.splitlines()
-        clean_lines = []
-        skip_block = False
-        for line in lines:
-            stripped = line.strip()
-            if re.match(r'^(Okay[,.]|Let me|I need to|I should|I will now|The user|Alright[,.])', stripped):
-                skip_block = True
-            elif stripped == '' and skip_block:
-                skip_block = False
-            if not skip_block:
-                clean_lines.append(line)
-        return '\n'.join(clean_lines).strip()
+        return text
 
-    # --- Keyless Fallback 1: DuckDuckGo AI Chat (direct HTTP, no key needed) ---
-    def call_duckduckgo(user_msg):
-        # Step 1: get a vqd token
-        req1 = urllib.request.Request(
-            'https://duckduckgo.com/duckchat/v1/status',
-            headers={'x-vqd-accept': '1', 'User-Agent': 'Mozilla/5.0'}
-        )
-        with urllib.request.urlopen(req1, timeout=8) as r:
-            vqd = r.headers.get('x-vqd-4', '') or r.headers.get('x-vqd-hash-1', '')
-        if not vqd:
-            raise Exception('No VQD token')
+    # --- Keyless Fallback: Pollinations.ai REST API (GET request, no auth, no rate limit per IP) ---
+    def call_pollinations(user_msg):
+        import urllib.parse
+        encoded = urllib.parse.quote(user_msg)
+        url = f"https://text.pollinations.ai/{encoded}?model=openai&system=You+are+a+helpful+FAQ+assistant+for+Antigravity+Tech+E-Store.+Be+concise+and+professional."
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return r.read().decode('utf-8').strip()
 
-        # Step 2: send message
-        payload = json.dumps({
-            'model': 'gpt-4o-mini',
-            'messages': [{'role': 'user', 'content': user_msg}]
-        }).encode('utf-8')
-        req2 = urllib.request.Request(
-            'https://duckduckgo.com/duckchat/v1/chat',
-            data=payload,
-            headers={
-                'Content-Type': 'application/json',
-                'x-vqd-4': vqd,
-                'User-Agent': 'Mozilla/5.0'
-            }
-        )
-        result_text = ''
-        with urllib.request.urlopen(req2, timeout=10) as r:
-            for raw_line in r:
-                line = raw_line.decode('utf-8').strip()
-                if line.startswith('data: '):
-                    chunk = line[6:]
-                    if chunk == '[DONE]':
-                        break
-                    try:
-                        data = json.loads(chunk)
-                        result_text += data.get('message', '')
-                    except Exception:
-                        pass
-        return result_text.strip()
-
-    # Try DuckDuckGo first (most reliable from Codespace IPs)
     try:
-        ddg_answer = call_duckduckgo(prompt)
-        if ddg_answer and len(ddg_answer) > 5:
+        poll_answer = call_pollinations(
+            f"FAQ context:\n{context_string}\n\nUser question: {user_message}\n\nAnswer concisely in 1-3 sentences as a customer service rep."
+        )
+        if poll_answer and len(poll_answer) > 5:
             return jsonify({
-                "answer": clean_answer(ddg_answer),
+                "answer": clean_answer(poll_answer),
                 "confidence": 1.0,
                 "matched_question": "Generative Fallback (Keyless)",
                 "category": "AI Assistant",
@@ -311,37 +267,28 @@ def chat():
                 "is_generated": True
             })
     except Exception as e:
-        print(f"DuckDuckGo Fallback Error: {e}")
+        print(f"Pollinations Fallback Error: {e}")
 
-    # --- Keyless Fallback 2: g4f providers ---
+    # --- Secondary Keyless Fallback: g4f with working providers ---
+    def call_g4f_provider(provider):
+        return g4f.ChatCompletion.create(
+            model=g4f.models.default,
+            provider=provider,
+            messages=[{"role": "user", "content": prompt}]
+        )
+
     keyless_providers = [
-        g4f.Provider.DDGS,
         g4f.Provider.Qwen_Qwen_3,
         g4f.Provider.BlackboxPro,
         g4f.Provider.DeepInfra,
         g4f.Provider.PollinationsAI,
-        g4f.Provider.LambdaChat,
     ]
-
-    PROVIDER_TIMEOUT = 8  # seconds per provider
 
     for provider in keyless_providers:
         try:
-            def call_provider(p=provider):
-                return g4f.ChatCompletion.create(
-                    model=g4f.models.default,
-                    provider=p,
-                    messages=[{"role": "user", "content": prompt}]
-                )
-
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                future = executor.submit(call_provider)
-                try:
-                    generated_answer = future.result(timeout=PROVIDER_TIMEOUT)
-                except concurrent.futures.TimeoutError:
-                    print(f"Keyless Fallback Timeout ({provider.__name__}): exceeded {PROVIDER_TIMEOUT}s")
-                    continue
-
+                future = executor.submit(call_g4f_provider, provider)
+                generated_answer = future.result(timeout=10)
             cleaned = clean_answer(generated_answer)
             if cleaned and len(cleaned) > 5:
                 return jsonify({

@@ -5,3 +5,4 @@ scikit-learn
 numpy
 google-genai
 g4f
+curl_cffi
