@@ -191,59 +191,26 @@ def chat():
             "suggestions": suggestions,
             "is_generated": False
         })
-    elif api_key:
-        # Fall back to Gemini API to generate the response
-        try:
-            client = genai.Client(api_key=api_key)
-            # Instruct the model using FAQs as context
-            context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs])
-            prompt = (
-                "You are an intelligent FAQ chatbot assistant for Antigravity Tech E-Store.\n"
-                "Here is the database of official FAQs:\n"
-                f"{context_string}\n\n"
-                f"User Question: \"{user_message}\"\n\n"
-                "Instructions:\n"
-                "1. If the user's question is answered in the FAQs, use that information to construct the reply.\n"
-                "2. If it is NOT in the FAQs, answer their question directly, accurately, and politely as a general customer service representative.\n"
-                "3. Keep your reply concise (1-3 sentences) and professional."
-            )
-            
-            response = client.models.generate_content(
-                model='gemini-1.5-flash',
-                contents=prompt
-            )
-            generated_answer = response.text.strip()
-            
-            return jsonify({
-                "answer": generated_answer,
-                "confidence": 1.0,
-                "matched_question": "Generative Fallback",
-                "category": "AI Assistant",
-                "suggestions": [],
-                "is_generated": True
-            })
-        except Exception as e:
-            print(f"Gemini API Error: {e}")
-            api_key = None  # invalidate so keyless fallback runs next
-            # Fall through to keyless fallback
 
-    # --- Groq API fallback (free tier, fast, no credit card needed) ---
+    # Build shared prompt for all AI backends
+    context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs])
+    ai_prompt = (
+        "You are an intelligent FAQ chatbot assistant for Antigravity Tech E-Store.\n"
+        "Here is the database of official FAQs:\n"
+        f"{context_string}\n\n"
+        f"User Question: \"{user_message}\"\n\n"
+        "Instructions:\n"
+        "1. If the user's question is answered in the FAQs, use that information to construct the reply.\n"
+        "2. If it is NOT in the FAQs, answer their question directly, accurately, and politely as a general customer service representative.\n"
+        "3. Keep your reply concise (1-3 sentences) and professional."
+    )
+
+    # --- Backend 1: Groq (free, fast, reliable) ---
     if groq_key:
         try:
-            context_string_groq = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs])
-            groq_prompt = (
-                "You are an intelligent FAQ chatbot assistant for Antigravity Tech E-Store.\n"
-                "Here is the database of official FAQs:\n"
-                f"{context_string_groq}\n\n"
-                f"User Question: \"{user_message}\"\n\n"
-                "Instructions:\n"
-                "1. If the user's question is answered in the FAQs, use that information.\n"
-                "2. If not in the FAQs, answer directly and politely as a customer service rep.\n"
-                "3. Keep your reply concise (1-3 sentences) and professional."
-            )
             payload = json.dumps({
                 "model": "llama3-8b-8192",
-                "messages": [{"role": "user", "content": groq_prompt}],
+                "messages": [{"role": "user", "content": ai_prompt}],
                 "max_tokens": 200
             }).encode()
             req = urllib.request.Request(
@@ -269,12 +236,32 @@ def chat():
         except Exception as e:
             print(f"Groq API Error: {e}")
 
-    # No match and no API key available, fall back to keyless AI Chat (try multiple providers)
-    context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs[:5]])
+    # --- Backend 2: Gemini ---
+    if api_key:
+        try:
+            client = genai.Client(api_key=api_key)
+            response = client.models.generate_content(
+                model='gemini-1.5-flash',
+                contents=ai_prompt
+            )
+            generated_answer = response.text.strip()
+            return jsonify({
+                "answer": generated_answer,
+                "confidence": 1.0,
+                "matched_question": "Generative Fallback",
+                "category": "AI Assistant",
+                "suggestions": [],
+                "is_generated": True
+            })
+        except Exception as e:
+            print(f"Gemini API Error: {e}")
+
+    # No match and no API key — keyless fallback
+    context_string_short = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs[:5]])
     prompt = (
         "You are an FAQ chatbot assistant for Antigravity Tech E-Store.\n"
         "Here is the database of official FAQs:\n"
-        f"{context_string}\n\n"
+        f"{context_string_short}\n\n"
         f"User Question: \"{user_message}\"\n\n"
         "Instructions:\n"
         "1. If the user's question is answered in the FAQs, use that information to construct the reply.\n"
