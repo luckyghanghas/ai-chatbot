@@ -220,8 +220,8 @@ def chat():
             })
         except Exception as e:
             print(f"Gemini API Error: {e}")
-            # Fall back to standard response if generation fails
-            pass
+            api_key = None  # invalidate so keyless fallback runs next
+            # Fall through to keyless fallback
 
     # No match and no API key available, fall back to keyless AI Chat (try multiple providers)
     context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs[:5]])
@@ -238,9 +238,11 @@ def chat():
 
     # Try multiple free providers in order until one works
     keyless_providers = [
-        g4f.Provider.Blackbox,
-        g4f.Provider.DeepInfraChat,
+        g4f.Provider.Qwen_Qwen_3,
+        g4f.Provider.BlackboxPro,
         g4f.Provider.PollinationsAI,
+        g4f.Provider.DeepInfra,
+        g4f.Provider.LambdaChat,
     ]
 
     for provider in keyless_providers:
