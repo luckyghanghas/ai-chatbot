@@ -171,6 +171,8 @@ def chat():
     # Supports Gemini key (X-Gemini-Key) and Groq key (X-Groq-Key)
     api_key = request.headers.get('X-Gemini-Key') or os.environ.get('GEMINI_API_KEY')
     groq_key = request.headers.get('X-Groq-Key') or os.environ.get('GROQ_API_KEY')
+
+    print(f"[DEBUG] groq_key present: {bool(groq_key)}, api_key present: {bool(api_key)}, score: {best_score:.3f}")
     
     if best_score >= THRESHOLD:
         best_match = faqs[best_match_idx]
