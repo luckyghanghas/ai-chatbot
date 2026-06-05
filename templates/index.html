@@ -115,19 +115,26 @@
     <div id="settings-modal" class="modal-overlay">
         <div class="modal-content glass">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-key"></i> Gemini API Settings</h3>
+                <h3><i class="fa-solid fa-key"></i> AI API Settings</h3>
                 <button id="close-settings" class="close-modal-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Provide a Google Gemini API Key to enable the fallback chatbot to answer general or off-topic questions in real time.</p>
+                <p>Add a free API key to enable AI-generated answers for questions not in the FAQ database.</p>
+                
                 <div class="input-group">
+                    <label for="groq-api-key">Groq API Key <span style="color:#a5b4fc;">(Recommended — Free &amp; Fast)</span></label>
+                    <input type="password" id="groq-api-key" placeholder="gsk_...">
+                    <p class="help-text">Get a free key (no credit card) at <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
+                </div>
+
+                <div class="input-group" style="margin-top:1rem;">
                     <label for="gemini-api-key">Gemini API Key</label>
                     <input type="password" id="gemini-api-key" placeholder="AIzaSy...">
+                    <p class="help-text">Get a free key at <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a>.</p>
                 </div>
-                <p class="help-text">You can get a free key from <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a>.</p>
             </div>
             <div class="modal-footer">
-                <button id="save-settings" class="btn primary-btn">Save Key</button>
+                <button id="save-settings" class="btn primary-btn">Save Keys</button>
                 <button id="cancel-settings" class="btn secondary-btn">Cancel</button>
             </div>
         </div>

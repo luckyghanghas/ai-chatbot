@@ -168,7 +168,9 @@ def chat():
     THRESHOLD = 0.22
     
     # Check for API key (prioritize header, then environment)
+    # Supports Gemini key (X-Gemini-Key) and Groq key (X-Groq-Key)
     api_key = request.headers.get('X-Gemini-Key') or os.environ.get('GEMINI_API_KEY')
+    groq_key = request.headers.get('X-Groq-Key') or os.environ.get('GROQ_API_KEY')
     
     if best_score >= THRESHOLD:
         best_match = faqs[best_match_idx]
@@ -224,6 +226,48 @@ def chat():
             print(f"Gemini API Error: {e}")
             api_key = None  # invalidate so keyless fallback runs next
             # Fall through to keyless fallback
+
+    # --- Groq API fallback (free tier, fast, no credit card needed) ---
+    if groq_key:
+        try:
+            context_string_groq = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs])
+            groq_prompt = (
+                "You are an intelligent FAQ chatbot assistant for Antigravity Tech E-Store.\n"
+                "Here is the database of official FAQs:\n"
+                f"{context_string_groq}\n\n"
+                f"User Question: \"{user_message}\"\n\n"
+                "Instructions:\n"
+                "1. If the user's question is answered in the FAQs, use that information.\n"
+                "2. If not in the FAQs, answer directly and politely as a customer service rep.\n"
+                "3. Keep your reply concise (1-3 sentences) and professional."
+            )
+            payload = json.dumps({
+                "model": "llama3-8b-8192",
+                "messages": [{"role": "user", "content": groq_prompt}],
+                "max_tokens": 200
+            }).encode()
+            req = urllib.request.Request(
+                "https://api.groq.com/openai/v1/chat/completions",
+                data=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {groq_key}"
+                }
+            )
+            with urllib.request.urlopen(req, timeout=10) as r:
+                groq_data = json.loads(r.read())
+            groq_answer = groq_data["choices"][0]["message"]["content"].strip()
+            if groq_answer:
+                return jsonify({
+                    "answer": groq_answer,
+                    "confidence": 1.0,
+                    "matched_question": "Generative Fallback",
+                    "category": "AI Assistant",
+                    "suggestions": [],
+                    "is_generated": True
+                })
+        except Exception as e:
+            print(f"Groq API Error: {e}")
 
     # No match and no API key available, fall back to keyless AI Chat (try multiple providers)
     context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs[:5]])
@@ -314,7 +358,7 @@ def chat():
         fallback_suggestions = [faq['question'] for faq in faqs[:3]]
 
     return jsonify({
-        "answer": "I couldn't find a precise match for that in our FAQs. Please enter your Gemini API Key in the settings (gear icon in header) to ask general questions!",
+        "answer": "I couldn't find a match for that in our FAQs. Add a free API key in settings (⚙️ gear icon) to enable AI answers — get a free Groq key at console.groq.com or a Gemini key at aistudio.google.com.",
         "confidence": best_score,
         "matched_question": None,
         "category": None,

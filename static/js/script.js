@@ -16,12 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveSettingsBtn = document.getElementById('save-settings');
     const settingsModal = document.getElementById('settings-modal');
     const apiKeyInput = document.getElementById('gemini-api-key');
+    const groqKeyInput = document.getElementById('groq-api-key');
 
     let allFaqs = [];
     let savedApiKey = localStorage.getItem('gemini_api_key') || '';
+    let savedGroqKey = localStorage.getItem('groq_api_key') || '';
 
     if (savedApiKey) {
         apiKeyInput.value = savedApiKey;
+    }
+    if (savedGroqKey) {
+        groqKeyInput.value = savedGroqKey;
     }
 
     // Modal events
@@ -31,14 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeModal = () => {
         settingsModal.classList.remove('open');
-        apiKeyInput.value = savedApiKey; // revert any unsaved text
+        apiKeyInput.value = savedApiKey;
+        groqKeyInput.value = savedGroqKey;
     };
 
     closeSettingsBtn.addEventListener('click', closeModal);
     cancelSettingsBtn.addEventListener('click', closeModal);
     saveSettingsBtn.addEventListener('click', () => {
         savedApiKey = apiKeyInput.value.trim();
+        savedGroqKey = groqKeyInput.value.trim();
         localStorage.setItem('gemini_api_key', savedApiKey);
+        localStorage.setItem('groq_api_key', savedGroqKey);
         settingsModal.classList.remove('open');
     });
 
@@ -188,6 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const headers = {
                 'Content-Type': 'application/json'
             };
+            if (savedGroqKey) {
+                headers['X-Groq-Key'] = savedGroqKey;
+            }
             if (savedApiKey) {
                 headers['X-Gemini-Key'] = savedApiKey;
             }
