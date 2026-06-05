@@ -2,6 +2,7 @@ import os
 import json
 import re
 import string
+import concurrent.futures
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 
@@ -236,25 +237,57 @@ def chat():
         "3. Keep your reply concise (1-3 sentences) and professional."
     )
 
-    # Try multiple free providers in order until one works
+    # Helper: strip internal reasoning/thinking blocks from model output
+    def clean_answer(text):
+        text = str(text).strip()
+        # Remove <think>...</think> blocks (used by reasoning models like Qwen)
+        text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+        # Remove leading monologue lines (internal reasoning leaked as plain text)
+        lines = text.splitlines()
+        clean_lines = []
+        skip_block = False
+        for line in lines:
+            stripped = line.strip()
+            if re.match(r'^(Okay[,.]|Let me|I need to|I should|I will now|The user|Alright[,.])', stripped):
+                skip_block = True
+            elif stripped == '' and skip_block:
+                skip_block = False
+            if not skip_block:
+                clean_lines.append(line)
+        return '\n'.join(clean_lines).strip()
+
+    # Try multiple free providers with a per-provider timeout of 8 seconds
     keyless_providers = [
         g4f.Provider.Qwen_Qwen_3,
         g4f.Provider.BlackboxPro,
-        g4f.Provider.PollinationsAI,
         g4f.Provider.DeepInfra,
+        g4f.Provider.PollinationsAI,
         g4f.Provider.LambdaChat,
     ]
 
+    PROVIDER_TIMEOUT = 8  # seconds per provider
+
     for provider in keyless_providers:
         try:
-            generated_answer = g4f.ChatCompletion.create(
-                model=g4f.models.default,
-                provider=provider,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            if generated_answer and len(str(generated_answer).strip()) > 5:
+            def call_provider(p=provider):
+                return g4f.ChatCompletion.create(
+                    model=g4f.models.default,
+                    provider=p,
+                    messages=[{"role": "user", "content": prompt}]
+                )
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(call_provider)
+                try:
+                    generated_answer = future.result(timeout=PROVIDER_TIMEOUT)
+                except concurrent.futures.TimeoutError:
+                    print(f"Keyless Fallback Timeout ({provider.__name__}): exceeded {PROVIDER_TIMEOUT}s")
+                    continue
+
+            cleaned = clean_answer(generated_answer)
+            if cleaned and len(cleaned) > 5:
                 return jsonify({
-                    "answer": str(generated_answer).strip(),
+                    "answer": cleaned,
                     "confidence": 1.0,
                     "matched_question": "Generative Fallback (Keyless)",
                     "category": "AI Assistant",
