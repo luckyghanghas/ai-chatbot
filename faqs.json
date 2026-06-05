@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "category": "General",
+    "question": "What is Antigravity Tech E-Store?",
+    "answer": "Antigravity Tech E-Store is a premium online marketplace offering cutting-edge gadgets, smart home devices, and developer-focused accessories with rapid global shipping.",
+    "tags": ["about", "company", "who are you", "what is this"]
+  },
+  {
+    "id": 2,
+    "category": "General",
+    "question": "How do I contact customer support?",
+    "answer": "You can reach our 24/7 customer support team via email at support@antigravitytech.com, through our live chat widget on the website, or by calling our toll-free number at 1-800-555-0199.",
+    "tags": ["contact", "support", "help", "email", "phone", "call"]
+  },
+  {
+    "id": 3,
+    "category": "Account",
+    "question": "How do I reset my account password?",
+    "answer": "To reset your password, click on the 'Forgot Password' link on the Login page. Enter your registered email address, and we will send you a password reset link. Follow the instructions in the email to set a new password.",
+    "tags": ["password", "reset", "login", "forgot password", "change password"]
+  },
+  {
+    "id": 4,
+    "category": "Account",
+    "question": "Can I change my account email address?",
+    "answer": "Yes, you can update your email address by logging into your account, navigating to 'Account Settings', selecting 'Profile Info', and entering your new email. For security reasons, you will need to verify the new email address.",
+    "tags": ["email", "change email", "update profile", "account settings"]
+  },
+  {
+    "id": 5,
+    "category": "Payments",
+    "question": "What payment methods do you accept?",
+    "answer": "We accept major credit cards (Visa, MasterCard, American Express, Discover), PayPal, Apple Pay, Google Pay, and selected cryptocurrencies like Bitcoin and Ethereum.",
+    "tags": ["payment", "credit card", "paypal", "crypto", "apple pay", "bitcoin"]
+  },
+  {
+    "id": 6,
+    "category": "Payments",
+    "question": "How secure is my payment information?",
+    "answer": "Extremely secure. All transactions are encrypted using Industry-Standard SSL/TLS technology, and we are fully PCI-DSS compliant. We do not store your raw credit card information on our servers.",
+    "tags": ["security", "safe", "encryption", "pci", "credit card safety"]
+  },
+  {
+    "id": 7,
+    "category": "Shipping & Returns",
+    "question": "What is your shipping policy?",
+    "answer": "We offer standard shipping (3-5 business days) and expedited shipping (1-2 business days). Shipping is free for orders over $50. Once your order ships, we will email you a tracking number.",
+    "tags": ["shipping", "delivery", "free shipping", "tracking", "how long"]
+  },
+  {
+    "id": 8,
+    "category": "Shipping & Returns",
+    "question": "How do I return an item?",
+    "answer": "We offer a 30-day money-back guarantee. To start a return, go to your 'Order History', select the order, click 'Return Items', and print your prepaid return shipping label. Once received, refunds are processed within 5-7 business days.",
+    "tags": ["return", "refund", "exchange", "send back", "money back"]
+  },
+  {
+    "id": 9,
+    "category": "Shipping & Returns",
+    "question": "Do you ship internationally?",
+    "answer": "Yes, we ship to over 150 countries worldwide. International shipping rates and delivery times vary by destination and will be calculated at checkout. Please note that customs duties may apply.",
+    "tags": ["international", "worldwide", "global shipping", "customs", "overseas"]
+  },
+  {
+    "id": 10,
+    "category": "Troubleshooting",
+    "question": "Why is my tracking link not working?",
+    "answer": "Tracking links can take up to 24-48 hours after shipment to activate in the carrier's system. If your link is still invalid after 48 hours, please reach out to support@antigravitytech.com.",
+    "tags": ["tracking error", "invalid link", "shipment tracking", "delivery status"]
+  },
+  {
+    "id": 11,
+    "category": "Troubleshooting",
+    "question": "My order arrived damaged. What should I do?",
+    "answer": "We apologize for the inconvenience! Please take photos of the damaged item and the packaging, then contact us immediately at support@antigravitytech.com with your order number. We will arrange a free replacement.",
+    "tags": ["damaged", "broken", "wrong item", "faulty", "replacement"]
+  }
+]

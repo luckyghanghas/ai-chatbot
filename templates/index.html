@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Intelligent Chatbot - Antigravity Tech</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Floating Glass Background Orbs -->
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        
+        <!-- Sidebar: FAQ Explorer -->
+        <aside class="sidebar glass">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-brain-circuit brain-icon"></i>
+                    <h2>FAQ Explorer</h2>
+                </div>
+                <p>Browse by categories or search directly in the chat.</p>
+            </div>
+            
+            <div class="category-filters">
+                <button class="category-chip active" data-category="all">All</button>
+                <button class="category-chip" data-category="General">General</button>
+                <button class="category-chip" data-category="Account">Account</button>
+                <button class="category-chip" data-category="Payments">Payments</button>
+                <button class="category-chip" data-category="Shipping & Returns">Shipping</button>
+                <button class="category-chip" data-category="Troubleshooting">Issues</button>
+            </div>
+
+            <div class="faq-list-container">
+                <ul id="faq-list" class="faq-list">
+                    <!-- Dynamic FAQ Questions list -->
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <span><i class="fa-solid fa-code"></i> Powered by NLP & Similarity</span>
+            </div>
+        </aside>
+
+        <!-- Main Chatbot Area -->
+        <main class="chat-container glass">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <div class="bot-info">
+                    <div class="bot-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                        <span class="status-indicator online"></span>
+                    </div>
+                    <div class="bot-details">
+                        <h3>Antigravity Bot</h3>
+                        <p>AI Support Assistant</p>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button id="open-settings" title="API Settings"><i class="fa-solid fa-gear"></i></button>
+                    <button id="clear-chat" title="Clear Conversation"><i class="fa-solid fa-trash-can"></i></button>
+                    <button id="toggle-sidebar" title="Toggle Sidebar"><i class="fa-solid fa-bars"></i></button>
+                </div>
+            </header>
+
+            <!-- Chat Window/Messages -->
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome greeting -->
+                <div class="welcome-card">
+                    <div class="welcome-icon">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <h2>Welcome to AI Support!</h2>
+                    <p>I can answer questions about shipping, payments, account recovery, returns, and troubleshooting instantly. Try typing a question below or pick a popular query:</p>
+                    <div class="quick-prompts">
+                        <button class="prompt-btn">How do I return an item?</button>
+                        <button class="prompt-btn">What payment methods do you accept?</button>
+                        <button class="prompt-btn">How secure is my payment?</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator-wrapper" id="typing-indicator">
+                <div class="bot-avatar small">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="typing-bubble">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+
+            <!-- Chat Input Footer -->
+            <footer class="chat-footer">
+                <form id="chat-form" class="chat-input-area">
+                    <input type="text" id="user-input" placeholder="Type your support question here..." autocomplete="off" required>
+                    <button type="submit" class="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </footer>
+        </main>
+    </div>
+
+    <!-- API Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-key"></i> Gemini API Settings</h3>
+                <button id="close-settings" class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Provide a Google Gemini API Key to enable the fallback chatbot to answer general or off-topic questions in real time.</p>
+                <div class="input-group">
+                    <label for="gemini-api-key">Gemini API Key</label>
+                    <input type="password" id="gemini-api-key" placeholder="AIzaSy...">
+                </div>
+                <p class="help-text">You can get a free key from <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a>.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings" class="btn primary-btn">Save Key</button>
+                <button id="cancel-settings" class="btn secondary-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
