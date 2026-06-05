@@ -3,3 +3,5 @@ flask-cors
 nltk
 scikit-learn
 numpy
+google-genai
+g4f

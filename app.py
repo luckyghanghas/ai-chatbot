@@ -16,8 +16,9 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Google Generative AI import
-import google.generativeai as genai
+# Google Generative AI import (new SDK)
+from google import genai
+from google.genai import types
 
 # Keyless fallback import
 import g4f
@@ -189,7 +190,7 @@ def chat():
     elif api_key:
         # Fall back to Gemini API to generate the response
         try:
-            genai.configure(api_key=api_key)
+            client = genai.Client(api_key=api_key)
             # Instruct the model using FAQs as context
             context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs])
             prompt = (
@@ -203,8 +204,10 @@ def chat():
                 "3. Keep your reply concise (1-3 sentences) and professional."
             )
             
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model='gemini-1.5-flash',
+                contents=prompt
+            )
             generated_answer = response.text.strip()
             
             return jsonify({
