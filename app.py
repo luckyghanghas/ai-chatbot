@@ -238,23 +238,30 @@ def chat():
         except Exception as e:
             print(f"Groq API Error: {e}")
 
-    # --- Backend 2: Gemini ---
+    # --- Backend 2: Gemini (direct HTTP, works with all key formats) ---
     if api_key:
         try:
-            client = genai.Client(api_key=api_key)
-            response = client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=ai_prompt
+            payload = json.dumps({
+                "contents": [{"parts": [{"text": ai_prompt}]}],
+                "generationConfig": {"maxOutputTokens": 300}
+            }).encode()
+            gemini_req = urllib.request.Request(
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
+                data=payload,
+                headers={"Content-Type": "application/json"}
             )
-            generated_answer = response.text.strip()
-            return jsonify({
-                "answer": generated_answer,
-                "confidence": 1.0,
-                "matched_question": "Generative Fallback",
-                "category": "AI Assistant",
-                "suggestions": [],
-                "is_generated": True
-            })
+            with urllib.request.urlopen(gemini_req, timeout=15) as r:
+                gemini_data = json.loads(r.read())
+            generated_answer = gemini_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            if generated_answer:
+                return jsonify({
+                    "answer": generated_answer,
+                    "confidence": 1.0,
+                    "matched_question": "Generative Fallback",
+                    "category": "AI Assistant",
+                    "suggestions": [],
+                    "is_generated": True
+                })
         except Exception as e:
             print(f"Gemini API Error: {e}")
 
