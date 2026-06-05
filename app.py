@@ -3,6 +3,7 @@ import json
 import re
 import string
 import concurrent.futures
+import urllib.request
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 
@@ -256,8 +257,65 @@ def chat():
                 clean_lines.append(line)
         return '\n'.join(clean_lines).strip()
 
-    # Try multiple free providers with a per-provider timeout of 8 seconds
+    # --- Keyless Fallback 1: DuckDuckGo AI Chat (direct HTTP, no key needed) ---
+    def call_duckduckgo(user_msg):
+        # Step 1: get a vqd token
+        req1 = urllib.request.Request(
+            'https://duckduckgo.com/duckchat/v1/status',
+            headers={'x-vqd-accept': '1', 'User-Agent': 'Mozilla/5.0'}
+        )
+        with urllib.request.urlopen(req1, timeout=8) as r:
+            vqd = r.headers.get('x-vqd-4', '') or r.headers.get('x-vqd-hash-1', '')
+        if not vqd:
+            raise Exception('No VQD token')
+
+        # Step 2: send message
+        payload = json.dumps({
+            'model': 'gpt-4o-mini',
+            'messages': [{'role': 'user', 'content': user_msg}]
+        }).encode('utf-8')
+        req2 = urllib.request.Request(
+            'https://duckduckgo.com/duckchat/v1/chat',
+            data=payload,
+            headers={
+                'Content-Type': 'application/json',
+                'x-vqd-4': vqd,
+                'User-Agent': 'Mozilla/5.0'
+            }
+        )
+        result_text = ''
+        with urllib.request.urlopen(req2, timeout=10) as r:
+            for raw_line in r:
+                line = raw_line.decode('utf-8').strip()
+                if line.startswith('data: '):
+                    chunk = line[6:]
+                    if chunk == '[DONE]':
+                        break
+                    try:
+                        data = json.loads(chunk)
+                        result_text += data.get('message', '')
+                    except Exception:
+                        pass
+        return result_text.strip()
+
+    # Try DuckDuckGo first (most reliable from Codespace IPs)
+    try:
+        ddg_answer = call_duckduckgo(prompt)
+        if ddg_answer and len(ddg_answer) > 5:
+            return jsonify({
+                "answer": clean_answer(ddg_answer),
+                "confidence": 1.0,
+                "matched_question": "Generative Fallback (Keyless)",
+                "category": "AI Assistant",
+                "suggestions": [],
+                "is_generated": True
+            })
+    except Exception as e:
+        print(f"DuckDuckGo Fallback Error: {e}")
+
+    # --- Keyless Fallback 2: g4f providers ---
     keyless_providers = [
+        g4f.Provider.DDGS,
         g4f.Provider.Qwen_Qwen_3,
         g4f.Provider.BlackboxPro,
         g4f.Provider.DeepInfra,
