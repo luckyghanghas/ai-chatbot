@@ -204,7 +204,7 @@ def chat():
     # Build shared prompt for all AI backends
     context_string = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs])
     ai_prompt = (
-        "You are an intelligent FAQ chatbot assistant for Antigravity Tech E-Store.\n"
+        "You are an intelligent FAQ chatbot assistant for our Tech E-Store.\n"
         "Here is the database of official FAQs:\n"
         f"{context_string}\n\n"
         f"User Question: \"{user_message}\"\n\n"
@@ -275,7 +275,7 @@ def chat():
     # No match and no API key — keyless fallback
     context_string_short = "\n".join([f"Q: {f['question']}\nA: {f['answer']}" for f in faqs[:5]])
     prompt = (
-        "You are an FAQ chatbot assistant for Antigravity Tech E-Store.\n"
+        "You are an FAQ chatbot assistant for our Tech E-Store.\n"
         "Here is the database of official FAQs:\n"
         f"{context_string_short}\n\n"
         f"User Question: \"{user_message}\"\n\n"
@@ -295,7 +295,7 @@ def chat():
     def call_pollinations(user_msg):
         import urllib.parse
         encoded = urllib.parse.quote(user_msg)
-        url = f"https://text.pollinations.ai/{encoded}?model=openai&system=You+are+a+helpful+FAQ+assistant+for+Antigravity+Tech+E-Store.+Be+concise+and+professional."
+        url = f"https://text.pollinations.ai/{encoded}?model=openai&system=You+are+a+helpful+FAQ+assistant+for+our+Tech+E-Store.+Be+concise+and+professional."
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=15) as r:
             return r.read().decode('utf-8').strip()

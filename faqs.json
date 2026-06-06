@@ -2,15 +2,15 @@
   {
     "id": 1,
     "category": "General",
-    "question": "What is Antigravity Tech E-Store?",
-    "answer": "Antigravity Tech E-Store is a premium online marketplace offering cutting-edge gadgets, smart home devices, and developer-focused accessories with rapid global shipping.",
+    "question": "What is our Tech E-Store?",
+    "answer": "Our Tech E-Store is a premium online marketplace offering cutting-edge gadgets, smart home devices, and developer-focused accessories with rapid global shipping.",
     "tags": ["about", "company", "who are you", "what is this"]
   },
   {
     "id": 2,
     "category": "General",
     "question": "How do I contact customer support?",
-    "answer": "You can reach our 24/7 customer support team via email at support@antigravitytech.com, through our live chat widget on the website, or by calling our toll-free number at 1-800-555-0199.",
+    "answer": "You can reach our 24/7 customer support team via email at support@tech-estore.com, through our live chat widget on the website, or by calling our toll-free number at 1-800-555-0199.",
     "tags": ["contact", "support", "help", "email", "phone", "call"]
   },
   {
@@ -66,14 +66,14 @@
     "id": 10,
     "category": "Troubleshooting",
     "question": "Why is my tracking link not working?",
-    "answer": "Tracking links can take up to 24-48 hours after shipment to activate in the carrier's system. If your link is still invalid after 48 hours, please reach out to support@antigravitytech.com.",
+    "answer": "Tracking links can take up to 24-48 hours after shipment to activate in the carrier's system. If your link is still invalid after 48 hours, please reach out to support@tech-estore.com.",
     "tags": ["tracking error", "invalid link", "shipment tracking", "delivery status"]
   },
   {
     "id": 11,
     "category": "Troubleshooting",
     "question": "My order arrived damaged. What should I do?",
-    "answer": "We apologize for the inconvenience! Please take photos of the damaged item and the packaging, then contact us immediately at support@antigravitytech.com with your order number. We will arrange a free replacement.",
+    "answer": "We apologize for the inconvenience! Please take photos of the damaged item and the packaging, then contact us immediately at support@tech-estore.com with your order number. We will arrange a free replacement.",
     "tags": ["damaged", "broken", "wrong item", "faulty", "replacement"]
   }
 ]
